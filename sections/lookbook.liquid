@@ -1,0 +1,444 @@
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<div class="section-container">
+  <div class="photo-container">
+    {% if section.settings.photo %}
+      <img src="{{ section.settings.photo | img_url: '848x1280', scale: 2 }}" alt="Lookbook-photo">
+    {% endif %}
+    <div class="button-container">
+      <button class="shop-the-look-btn" onclick="openModal()">Shop the Look</button>
+    </div>
+  </div>
+  <div class="text-container">
+    <p>{{ section.settings.custom_text }}</p>
+  </div>
+  <div class="modal" id="myModal">
+    <div class="modal-content-container">
+      <div class="photo-container-second">
+        {% if section.settings.photo %}
+          <img src="{{ section.settings.photo | img_url: '920x920', scale: 2 }}" alt="Lookbook-photo">
+        {% endif %}
+      </div>
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="product-info">
+          <div class="general-product">
+            <div class="photo-product">
+              {% assign product_1 = all_products[section.settings.product_1] %}
+              {% if product_1 %}
+                <img src="{{ product_1.featured_image.src | img_url: '100x100' }}" alt="{{ product_1.title }}">
+              {% endif %}
+            </div>
+            <div class="sub-block-product">
+              <div class="sub-block-product-top">
+                {% if product_1 %}
+                  <h2 class="product-title-sub">{{ product_1.title }}</h2>
+                  <div>
+                    <h3 class="product-price-discount-sub">
+                      {% if product_1.compare_at_price > product_1.price %}
+                        <span class="discounted-price">{{ product_1.compare_at_price | money_without_trailing_zeros }}</span>
+                      {% endif %}
+                    </h3>
+                    <h3 class="product-price-sub">{{ product_1.price | money_without_trailing_zeros }}</h3>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="sub-block-product-medium">
+                <p>{{ product_1.description }}</p>
+              </div>
+              <div class="sub-block-product-bottom">
+                <select name="product_variant_1" id="product_variant_1" class="select_variant">
+                  {% for variant in product_1.variants %}
+                    <option value="{{ variant.id }}">{{ variant.title }}</option>
+                  {% endfor %}
+                </select>
+                <button onclick="addToCart(1)" class="add_to_cart">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="general-product">
+            <div class="photo-product">
+              {% assign product_2 = all_products[section.settings.product_2] %}
+              {% if product_2 %}
+                <img src="{{ product_2.featured_image.src | img_url: '100x100' }}" alt="{{ product_2.title }}">
+              {% endif %}
+            </div>
+            <div class="sub-block-product">
+              <div class="sub-block-product-top">
+                {% if product_2 %}
+                  <h2 class="product-title-sub">{{ product_2.title }}</h2>
+                  <div>
+                    <h3 class="product-price-discount-sub">
+                      {% if product_2.compare_at_price > product_2.price %}
+                        <span class="discounted-price">{{ product_2.compare_at_price | money_without_trailing_zeros }}</span>
+                      {% endif %}
+                    </h3>
+                    <h3 class="product-price-sub">{{ product_2.price | money_without_trailing_zeros }}</h3>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="sub-block-product-medium">
+                <p>{{ product_2.description }}</p>
+              </div>
+              <div class="sub-block-product-bottom">
+                <select name="product_variant_2" id="product_variant_2" class="select_variant">
+                  {% for variant in product_2.variants %}
+                    <option value="{{ variant.id }}">{{ variant.title }}</option>
+                  {% endfor %}
+                </select>
+                <button onclick="addToCart(2)" class="add_to_cart">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="general-product">
+            <div class="photo-product">
+              {% assign product_3 = all_products[section.settings.product_3] %}
+              {% if product_3 %}
+                <img src="{{ product_3.featured_image.src | img_url: '100x100' }}" alt="{{ product_3.title }}">
+              {% endif %}
+            </div>
+            <div class="sub-block-product">
+              <div class="sub-block-product-top">
+                {% if product_3 %}
+                  <h2 class="product-title-sub">{{ product_3.title }}</h2>
+                  <div>
+                    <h3 class="product-price-discount-sub">
+                      {% if product_3.compare_at_price > product_3.price %}
+                        <span class="discounted-price">{{ product_3.compare_at_price | money_without_trailing_zeros  }}</span>
+                      {% endif %}
+                    </h3>
+                    <h3 class="product-price-sub">{{ product_3.price | money_without_trailing_zeros }}</h3>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="sub-block-product-medium">
+                <p>{{ product_3.description }}</p>
+              </div>
+              <div class="sub-block-product-bottom">
+                <select name="product_variant_3" id="product_variant_3" class="select_variant">
+                  {% for variant in product_3.variants %}
+                    <option value="{{ variant.id }}">{{ variant.title }}</option>
+                  {% endfor %}
+                </select>
+                <button onclick="addToCart(3)" class="add_to_cart">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+  function addToCart(productNumber) {
+    var selectedVariantId = document.getElementById('product_variant_' + productNumber).value;
+  
+    $.ajax({
+      type: 'POST',
+      url: '/cart/add.js',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        id: selectedVariantId,
+        quantity: 1,
+      }),
+      success: function(data) {
+        console.log('Product added to cart:', data);
+        updateCartCount();
+      },
+      error: function(error) {
+        console.error('Error adding product to cart:', error);
+      }
+    });
+  }
+  
+  function updateCartCount() {
+    $.ajax({
+      type: 'GET',
+      url: '/cart.js',
+      dataType: 'json',
+      success: function(cartData) {
+        document.querySelectorAll('.custom-count').forEach(el => {
+          el.textContent = cartData.item_count;
+        });
+      },
+      error: function(error) {
+        console.error('Error updating cart count:', error);
+      }
+    });
+  }
+
+  function openModal() {
+    document.getElementById('myModal').style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('myModal').style.display = 'none';
+  }
+</script>
+
+
+{% schema %}
+{
+  "name": "lookbook",
+  "settings": [
+    {
+      "type": "image_picker",
+      "label": "Оберіть фото",
+      "id": "photo"
+    },
+    {
+      "type": "text",
+      "label": "Ваш текст",
+      "id": "custom_text",
+      "default": "Введіть текст для секції"
+    },
+     {
+      "type": "product",
+      "label": "Обрати продукт 1",
+      "id": "product_1",
+      "info": "Виберіть перший продукт для відображення в модальному вікні."
+    },
+    {
+      "type": "product",
+      "label": "Обрати продукт 2",
+      "id": "product_2",
+      "info": "Виберіть другий продукт для відображення в модальному вікні."
+    },
+    {
+      "type": "product",
+      "label": "Обрати продукт 3",
+      "id": "product_3",
+      "info": "Виберіть третій продукт для відображення в модальному вікні."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lookbook",
+      "category": "Lookbook"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .section-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+  }
+
+  .photo-container img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .button-container {
+    width:100%;
+    display: flex;
+  }
+  
+   .shop-the-look-btn {
+    background-color: white;
+    color: gray;
+    border: 1px solid gray;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: auto;
+    font-size: 14px;
+  }
+
+  .text-container {
+    flex-grow: 1;
+    max-width: 50%; 
+    padding: 30px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .text-container p {
+    max-width: 100%;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    background-color: white;
+    overflow-x: hidden;
+    padding-top: 20px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+
+  .modal-content-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .photo-container-second,
+  .modal-content {
+    flex: 1;
+    margin-right: 20px;
+  }
+
+  .photo-container-second img {
+    max-width: 100%; 
+    height: auto; 
+  }
+
+  .modal-content {
+    padding: 20px;
+    padding-top: 100px;
+  }
+
+  .close {
+    position: absolute;
+    top: 100px;
+    right: 30px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  @media only screen and (max-width: 767px) {
+    .section-container {
+      display: block; 
+    }
+
+    .text-container {
+      max-width: 100%;
+    }
+
+    .modal {
+      width: 100%;
+    }
+
+    .product-title-sub {
+      font-size: 10px !important;
+    }
+    
+    .product-price-discount-sub,
+    .product-price-sub {
+      font-size: 10px !important;
+    }
+
+    .photo-container-second img {
+      width: 100%;
+    }
+
+    .modal-content-container {
+      flex-direction: column;
+    }
+
+    .product-title-sub,
+    .product-price-discount-sub,
+    .product-price-sub,
+    .sub-block-product-medium,
+    .select_variant,
+    .add_to_cart {
+      font-size: 10px;
+    }
+
+    .product-title-sub {
+      max-width: 40vw;
+    }
+    
+
+    .close {
+      top: 60px;
+      font-size: 30px;
+      right: 20px;
+    }
+
+    .modal-content {
+      padding: 0px;
+    }
+
+    .photo-container-second,
+    .general-product {
+      margin-right: 0;
+      margin-bottom: 20px;
+      margin-top: 70px;
+    }
+
+    .modal-content {
+      padding-top: 0px;
+    }
+
+  }
+
+  .general-product {
+    display: flex;
+    margin-top: 4vh;
+  }
+
+  .sub-block-product-top {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .sub-block-product-bottom {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .sub-block-product-bottom select {
+    width: 15%;
+    border: none;
+    font-weight: bold;
+  }
+
+  .sub-block-product-bottom button {
+    width: 80%;
+    background-color: white;
+    color: gray;
+    border: 1px solid gray;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .photo-product {
+    max-width: 100px;
+    max-height: 100px;
+  }
+
+  .sub-block-product {
+    margin-left: 15px;
+    width: -webkit-fill-available;
+  }
+
+  .product-title-sub {
+    font-size: 14px;
+  }
+
+  .product-price-sub {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .product-price-discount-sub {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .discounted-price {
+    text-decoration: line-through; 
+    color: red; 
+  }
+
+</style>
+
+
+
+
