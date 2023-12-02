@@ -16,117 +16,46 @@
     <div class="modal-content-container">
       <div class="photo-container-second">
         {% if section.settings.photo %}
-          <img src="{{ section.settings.photo | img_url: '920x920', scale: 2 }}" alt="Lookbook-photo">
+          <img src="{{ section.settings.photo | img_url: '720x720', scale: 1 }}" alt="Lookbook-photo">
         {% endif %}
       </div>
       <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <div class="product-info">
-          <div class="general-product">
-            <div class="photo-product">
-              {% assign product_1 = all_products[section.settings.product_1] %}
-              {% if product_1 %}
-                <img src="{{ product_1.featured_image.src | img_url: '100x100' }}" alt="{{ product_1.title }}">
-              {% endif %}
-            </div>
-            <div class="sub-block-product">
-              <div class="sub-block-product-top">
-                {% if product_1 %}
-                  <h2 class="product-title-sub">{{ product_1.title }}</h2>
-                  <div>
-                    <h3 class="product-price-discount-sub">
-                      {% if product_1.compare_at_price > product_1.price %}
-                        <span class="discounted-price">{{ product_1.compare_at_price | money_without_trailing_zeros }}</span>
-                      {% endif %}
-                    </h3>
-                    <h3 class="product-price-sub">{{ product_1.price | money_without_trailing_zeros }}</h3>
+          {% for block in section.blocks %}
+            {% assign product = all_products[block.settings.selected_product] %}
+            {% if product %}
+              <div class="general-product">
+                <div class="photo-product">
+                  <img src="{{ product.featured_image.src | img_url: '100x100' }}" alt="{{ product.title }}">
+                </div>
+                <div class="sub-block-product">
+                  <div class="sub-block-product-top">
+                    <h2 class="product-title-sub">{{ product.title }}</h2>
+                    <div>
+                      <h3 class="product-price-discount-sub">
+                        {% if product.compare_at_price > product.price %}
+                          <span class="discounted-price">{{ product.compare_at_price | money_without_trailing_zeros }}</span>
+                        {% endif %}
+                      </h3>
+                      <h3 class="product-price-sub">{{ product.price | money_without_trailing_zeros }}</h3>
+                    </div>
                   </div>
-                {% endif %}
-              </div>
-              <div class="sub-block-product-medium">
-                <p>{{ product_1.description }}</p>
-              </div>
-              <div class="sub-block-product-bottom">
-                <select name="product_variant_1" id="product_variant_1" class="select_variant">
-                  {% for variant in product_1.variants %}
-                    <option value="{{ variant.id }}">{{ variant.title }}</option>
-                  {% endfor %}
-                </select>
-                <button onclick="addToCart(1)" class="add_to_cart">Add to Cart</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="general-product">
-            <div class="photo-product">
-              {% assign product_2 = all_products[section.settings.product_2] %}
-              {% if product_2 %}
-                <img src="{{ product_2.featured_image.src | img_url: '100x100' }}" alt="{{ product_2.title }}">
-              {% endif %}
-            </div>
-            <div class="sub-block-product">
-              <div class="sub-block-product-top">
-                {% if product_2 %}
-                  <h2 class="product-title-sub">{{ product_2.title }}</h2>
-                  <div>
-                    <h3 class="product-price-discount-sub">
-                      {% if product_2.compare_at_price > product_2.price %}
-                        <span class="discounted-price">{{ product_2.compare_at_price | money_without_trailing_zeros }}</span>
-                      {% endif %}
-                    </h3>
-                    <h3 class="product-price-sub">{{ product_2.price | money_without_trailing_zeros }}</h3>
+                  <div class="sub-block-product-medium">
+                    <p>{{ product.description }}</p>
                   </div>
-                {% endif %}
-              </div>
-              <div class="sub-block-product-medium">
-                <p>{{ product_2.description }}</p>
-              </div>
-              <div class="sub-block-product-bottom">
-                <select name="product_variant_2" id="product_variant_2" class="select_variant">
-                  {% for variant in product_2.variants %}
-                    <option value="{{ variant.id }}">{{ variant.title }}</option>
-                  {% endfor %}
-                </select>
-                <button onclick="addToCart(2)" class="add_to_cart">Add to Cart</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="general-product">
-            <div class="photo-product">
-              {% assign product_3 = all_products[section.settings.product_3] %}
-              {% if product_3 %}
-                <img src="{{ product_3.featured_image.src | img_url: '100x100' }}" alt="{{ product_3.title }}">
-              {% endif %}
-            </div>
-            <div class="sub-block-product">
-              <div class="sub-block-product-top">
-                {% if product_3 %}
-                  <h2 class="product-title-sub">{{ product_3.title }}</h2>
-                  <div>
-                    <h3 class="product-price-discount-sub">
-                      {% if product_3.compare_at_price > product_3.price %}
-                        <span class="discounted-price">{{ product_3.compare_at_price | money_without_trailing_zeros  }}</span>
-                      {% endif %}
-                    </h3>
-                    <h3 class="product-price-sub">{{ product_3.price | money_without_trailing_zeros }}</h3>
+                  <div class="sub-block-product-bottom">
+                    <select name="product_variant_{{ forloop.index }}" id="product_variant_{{ forloop.index }}" class="select_variant">
+                      {% for variant in product.variants %}
+                        <option value="{{ variant.id }}">{{ variant.title }}</option>
+                      {% endfor %}
+                    </select>
+                    <button onclick="addToCart({{ forloop.index }})" class="add_to_cart">Add to Cart</button>
                   </div>
-                {% endif %}
+                </div>
               </div>
-              <div class="sub-block-product-medium">
-                <p>{{ product_3.description }}</p>
-              </div>
-              <div class="sub-block-product-bottom">
-                <select name="product_variant_3" id="product_variant_3" class="select_variant">
-                  {% for variant in product_3.variants %}
-                    <option value="{{ variant.id }}">{{ variant.title }}</option>
-                  {% endfor %}
-                </select>
-                <button onclick="addToCart(3)" class="add_to_cart">Add to Cart</button>
-              </div>
-            </div>
-          </div>
-
+            {% endif %}
+          {% endfor %}
         </div>
       </div>
     </div>
@@ -199,24 +128,20 @@
       "label": "Ваш текст",
       "id": "custom_text",
       "default": "Введіть текст для секції"
-    },
-     {
-      "type": "product",
-      "label": "Обрати продукт 1",
-      "id": "product_1",
-      "info": "Виберіть перший продукт для відображення в модальному вікні."
-    },
+    }
+  ],
+  "blocks": [
     {
-      "type": "product",
-      "label": "Обрати продукт 2",
-      "id": "product_2",
-      "info": "Виберіть другий продукт для відображення в модальному вікні."
-    },
-    {
-      "type": "product",
-      "label": "Обрати продукт 3",
-      "id": "product_3",
-      "info": "Виберіть третій продукт для відображення в модальному вікні."
+      "type": "general_product",
+      "name": "General Product",
+      "settings": [
+        {
+          "type": "product",
+          "label": "Обрати продукт",
+          "id": "selected_product",
+          "info": "Виберіть продукт для відображення в блоку."
+        }
+      ]
     }
   ],
   "presets": [
@@ -227,6 +152,7 @@
   ]
 }
 {% endschema %}
+
 
 <style>
   .section-container {
@@ -258,7 +184,7 @@
   .text-container {
     flex-grow: 1;
     max-width: 50%; 
-    padding: 30px;
+    padding: 100px;
     box-sizing: border-box;
     text-align: center;
   }
@@ -270,26 +196,25 @@
   .modal {
     display: none;
     position: fixed;
-    z-index: 1;
-    right: 0;
+    z-index: 3;
     top: 0;
-    width: 100%; 
-    height: 100%;
+    height: 98%;
     background-color: white;
     overflow-x: hidden;
-    padding-top: 20px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   }
 
   .modal-content-container {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
   
   .photo-container-second,
   .modal-content {
-    flex: 1;
+    margin-top: auto;
+    margin-bottom: auto;
     margin-right: 20px;
   }
 
@@ -300,7 +225,6 @@
 
   .modal-content {
     padding: 20px;
-    padding-top: 100px;
   }
 
   .close {
@@ -311,7 +235,8 @@
     cursor: pointer;
   }
 
-  @media only screen and (max-width: 767px) {
+
+  @media only screen and (max-width: 1000px) {
     .section-container {
       display: block; 
     }
@@ -356,7 +281,7 @@
     
 
     .close {
-      top: 60px;
+      top: 30px;
       font-size: 30px;
       right: 20px;
     }
@@ -381,6 +306,8 @@
   .general-product {
     display: flex;
     margin-top: 4vh;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #c0c0c0;
   }
 
   .sub-block-product-top {
@@ -437,8 +364,14 @@
     color: red; 
   }
 
-</style>
+  @media only screen and (min-width: 1000px) {
+    .modal {
+      height: auto;
+      overflow-y: hidden;
+    }
+  }
 
+</style>
 
 
 
